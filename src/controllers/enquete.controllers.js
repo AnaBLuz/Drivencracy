@@ -29,7 +29,7 @@
       }
  }
 
- export async function mostrarEnquetes(req,res){
+ export async function getEnquetes(req,res){
 
   try{
     const enquetes = await db.collection("enquetes").find().toArray()
@@ -40,3 +40,61 @@
   }
 
  }
+
+ export async function getOpcoesVotos(req, res) {
+  const id = req.params.id;
+
+  try {
+    const listaOpcoes = await db.collection('opcoes').find({ pollId: id }).toArray();
+
+    if(listaOpcoes.length === 0) {
+      return res.status(404).send('Enquete não encontrada');
+    }
+
+    res.send(listaOpcoes);
+  } catch(error) {
+    console.log(error);
+    res.status(500).send(error.message);
+  }
+}
+
+export async function resultado(req, res) {
+  const id = req.params.id;
+
+  try {
+    const opcao = await db.collection('opcoes').find({ pollId: id }).toArray();
+    const voto = await db.collection('votos').find({ }).toArray();
+    const counter = [];
+    let position = 0;
+    let maior = 0;
+    
+    for(let i = 0; i < opcao.length; i++){
+      counter.push(0);
+    }
+
+    for(let i = 0; i < opcao.length; i++) {
+      for(let j = 0; j < voto.length; j++) {
+        if(opcao[i]._id == (new ObjectId(voto[j].opcaoId).toString())) {
+          counter[i]++;  
+          if(counter[i] > maior){
+            position = i;
+            maior = counter[i];
+          }
+        }
+      }
+    }
+ 
+    const enquete = await db.collection('enquetes').findOne({ _id: new ObjectId(id) });
+
+    res.send({
+      ...enquete,
+      result: {
+        title: opcao[position].title,
+        votes: Math.max(...counter) 
+      }
+    })    
+  } catch(error) {
+    console.log(error);
+    res.status(500).send(error.message);
+    }
+}
