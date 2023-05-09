@@ -76,7 +76,7 @@ export async function resultado(req, res) {
 
     for(let i = 0; i < opcao.length; i++) {
       for(let j = 0; j < voto.length; j++) {
-        if(opcao[i]._id == (new ObjectId(voto[j].opcaoId).toString())) {
+        if(opcao[i]._id == (new ObjectId(voto[j].choiceId).toString())) {
           counter[i]++;  
           if(counter[i] > maior){
             position = i;

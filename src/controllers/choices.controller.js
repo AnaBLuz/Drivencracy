@@ -14,10 +14,10 @@ export async function criarVoto(req,res){
     }
 
    try{
-    const enqueteExistente = await db.collection("enquetes").findOne({ _id: pollId})
+    const enqueteExistente = await db.collection("enquetes").findOne({ _id: new ObjectId(pollId)})
     if(!enqueteExistente) return res.sendStatus(404)
     const opcaoExistente = await db.collection("opcoes").findOne({
-        title: title, pollId: pollId
+        title: title, pollId: new ObjectId(pollId)
     })
     if (opcaoExistente) return res.sendStatus(409)
 
