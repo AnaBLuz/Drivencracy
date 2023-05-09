@@ -42,12 +42,12 @@
  }
 
  export async function getOpcoesVotos(req, res) {
-  const pollId = req.params.id;
+  const { id } = req.params;
 
   try {
     const opcoesVotos = await db
       .collection("opcoes")
-      .find({ pollId: pollId })
+      .find({ pollId: id})
       .toArray();
     if (opcoesVotos.length === 0) {
       return res.status(404).send("Enquete não encontrada");
