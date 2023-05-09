@@ -5,12 +5,8 @@ import dayjs from "dayjs";
 
 
 export async function criarVoto(req,res){
-    const {title} = req.body;
-    const pollId = new ObjectId(req.body.pollId);
-    const { id } = req.params;
-    const opcaoId = new ObjectId(id);
-
-
+    const {title, pollId} = req.body;
+    
     const validation = opcaoVotoSchema.validate(req.body, { abortEarly: false })
     if (validation.error) {
         const errors = validation.error.details.map(detail => detail.message)
@@ -21,14 +17,14 @@ export async function criarVoto(req,res){
     const enqueteExistente = await db.collection("enquetes").findOne({ _id: pollId})
     if(!enqueteExistente) return res.sendStatus(404)
     const opcaoExistente = await db.collection("opcoes").findOne({
-        title, pollId: pollId
+        title: title, pollId: pollId
     })
     if (opcaoExistente) return res.sendStatus(409)
 
-    const expirou = dayjs().isAfter(dayjs(enqueteExistente.expireAt))
-    if (expirou) return res.sendStatus(403)
+    //const expirou = dayjs().isAfter(dayjs(enqueteExistente.expireAt))
+    //if (expirou) return res.sendStatus(403)
 
-    await db.collection('opcoes').insertOne({ opcaoId, title, pollId: pollId })
+    await db.collection('opcoes').insertOne({ title, pollId})
     res.sendStatus(201)
 
 } catch (error) {

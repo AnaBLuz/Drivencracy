@@ -42,19 +42,21 @@
  }
 
  export async function getOpcoesVotos(req, res) {
-  const id = req.params.id;
+  const pollId = req.params.id;
 
   try {
-    const listaOpcoes = await db.collection('opcoes').find({ pollId: id }).toArray();
-
-    if(listaOpcoes.length === 0) {
-      return res.status(404).send('Enquete não encontrada');
+    const opcoesVotos = await db
+      .collection("opcoes")
+      .find({ pollId: pollId })
+      .toArray();
+    if (opcoesVotos.length === 0) {
+      return res.status(404).send("Enquete não encontrada");
     }
 
-    res.send(listaOpcoes);
-  } catch(error) {
+    return res.status(200).send(opcoesVotos);
+  } catch (error) {
     console.log(error);
-    res.status(500).send(error.message);
+    res.sendStatus(500);
   }
 }
 

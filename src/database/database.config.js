@@ -12,3 +12,7 @@ try {
 }
 
 export const db = mongoClient.db()
+
+export const pollsCollection = db.collection("enquetes");
+export const choicesCollection = db.collection("opcoes");
+export const votesCollection = db.collection("votos");
